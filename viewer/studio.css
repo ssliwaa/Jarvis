@@ -1,0 +1,232 @@
+/* Studio drawer: right-hand sheet over the dock, dense and quiet. */
+.studio-panel {
+  position: fixed;
+  z-index: 20;
+  top: 0;
+  right: calc(var(--dock) + 26px);
+  bottom: 0;
+  width: min(560px, calc(100vw - var(--dock) - 60px));
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 16px 18px;
+  background: var(--panel);
+  border-left: 1px solid var(--line-strong);
+  box-shadow: -30px 0 80px rgba(0, 0, 0, .55);
+  overflow: auto;
+  scrollbar-width: thin;
+}
+.studio-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.studio-eyebrow { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: .12em; color: var(--dim); }
+.studio-head h2 { font-size: 15px; font-weight: 600; margin-top: 3px; }
+.studio-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+}
+.studio-tab {
+  height: 24px;
+  padding: 0 9px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 10px;
+}
+.studio-tab:hover { color: var(--text); border-color: var(--line-strong); }
+.studio-tab[aria-selected="true"] { color: #04120b; background: var(--accent); border-color: var(--accent); }
+.studio-status { font-size: 10.5px; line-height: 1.5; color: var(--dim); }
+.studio-status[data-state="error"] { color: var(--danger); }
+.studio-status[data-state="working"] { color: var(--amber); }
+.studio-view { display: flex; flex-direction: column; gap: 9px; }
+.studio-note { font-size: 10.5px; line-height: 1.6; color: var(--muted); }
+.studio-subheading {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-top: 6px;
+}
+.studio-form, .studio-block { display: flex; flex-direction: column; gap: 7px; }
+/* Mission Control renders dynamic cards (intel, cortex, connectors,
+   automations) with this class; without it the cards had no surface at all. */
+.studio-card {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel-2);
+}
+.studio-card > strong { font-size: 11px; line-height: 1.5; color: var(--text); }
+.studio-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.studio-row > input, .studio-row > select, .studio-form textarea, .studio-form > input, #clipboard-text, #selfmod-goal, #selfmod-instruction, #selfmod-traceback {
+  flex: 1 1 140px;
+  min-width: 0;
+  padding: 7px 9px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel-2);
+  color: var(--text);
+  font-size: 11px;
+  outline: 0;
+}
+.studio-form textarea, #selfmod-goal, #selfmod-instruction, #selfmod-traceback, #clipboard-text {
+  min-height: 64px;
+  resize: vertical;
+  line-height: 1.6;
+  font-family: inherit;
+}
+.studio-row > input:focus, .studio-row > select:focus, .studio-form textarea:focus, #clipboard-text:focus {
+  border-color: var(--accent-line);
+}
+.studio-row > select { flex: 0 0 auto; }
+.studio-actions { display: flex; flex-wrap: wrap; gap: 6px; }
+.studio-button {
+  height: 28px;
+  padding: 0 11px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: var(--panel-2);
+  color: var(--muted);
+  font-size: 10.5px;
+}
+.studio-button:hover { color: var(--text); border-color: var(--accent-line); }
+.studio-button.primary { background: var(--accent); border-color: var(--accent); color: #04120b; font-weight: 600; }
+.studio-button.primary:hover { background: #5ce9ae; }
+.studio-button.danger { border-color: rgba(242, 89, 107, .4); color: #ff9aa6; }
+.studio-button:disabled { opacity: .45; }
+.studio-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.studio-list > li, .studio-memory, .studio-session, .studio-skill, .studio-result, .studio-schedule {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 9px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel-2);
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: var(--muted);
+  flex-wrap: wrap;
+}
+.studio-list b, .studio-memory b, .studio-session b, .studio-skill b, .studio-result b, .studio-schedule b {
+  color: var(--text);
+  font-weight: 550;
+}
+.studio-list span, .studio-memory span, .studio-session span, .studio-skill span, .studio-result span, .studio-schedule span {
+  font-family: var(--mono);
+  font-size: 9px;
+  color: var(--dim);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.studio-memory button, .studio-skill button, .studio-schedule button, .studio-list button {
+  margin-left: auto;
+  height: 22px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 9.5px;
+}
+.studio-memory button:hover, .studio-skill button:hover, .studio-schedule button:hover, .studio-list button:hover {
+  color: var(--text);
+  border-color: var(--accent-line);
+}
+.studio-result a { color: var(--accent); text-decoration: none; }
+.studio-result a:hover { text-decoration: underline; }
+.studio-detail {
+  margin: 0;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #06090a;
+  color: #c3d1d8;
+  font-family: var(--mono);
+  font-size: 10px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 260px;
+  overflow: auto;
+}
+.studio-diff {
+  margin: 0 0 8px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #06090a;
+  color: #c3d1d8;
+  font-family: var(--mono);
+  font-size: 10px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 280px;
+  overflow: auto;
+}
+.studio-detail-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; font-family: var(--sans); font-size: 11px; color: var(--text); }
+.studio-metrics { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 6px; }
+.studio-metrics > * {
+  padding: 8px 9px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel-2);
+  font-size: 10px;
+  color: var(--muted);
+}
+.studio-metrics strong { display: block; font-family: var(--mono); font-size: 14px; color: var(--text); }
+/* A metric card carries label + value (+ note). Without an explicit column the
+   inline <b>/<span> ran together ("Load0.89 / 1.04 / 1.194 CPUs"). studio.js
+   writes b>span>small; mission.js writes strong>span and is marked
+   .studio-metric-value. */
+.studio-metric { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.studio-metric > b {
+  font-size: 9.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--dim);
+}
+.studio-metric > span {
+  font-family: var(--mono); font-size: 12px; line-height: 1.35; color: var(--text);
+  overflow-wrap: anywhere;
+}
+.studio-metric > small { font-size: 9.5px; line-height: 1.35; color: var(--dim); overflow-wrap: anywhere; }
+.studio-metric-value > strong {
+  display: block; font-family: var(--mono); font-size: 15px; line-height: 1.15; color: var(--text);
+  overflow-wrap: anywhere;
+}
+.studio-metric-value > span { font-family: var(--sans); font-size: 9.5px; color: var(--dim); }
+.studio-check { display: flex; align-items: center; gap: 6px; font-size: 10.5px; color: var(--muted); }
+.studio-hint { font-family: var(--mono); font-size: 9px; color: var(--dim); align-self: center; }
+.studio-list:empty::after { content: "Nothing here yet."; color: var(--dim); font-size: 10.5px; padding: 4px 2px; }
+.studio-list > li { flex-wrap: nowrap; }
+.studio-list > li > b { flex: 0 0 auto; }
+.studio-list > li > span { flex: 1 1 auto; min-width: 0; }
+.studio-list > li > button { flex: 0 0 auto; }
+@media (max-width: 720px) {
+  .studio-panel { width: 100vw; }
+}
+
+
+/* readability pass */
+.studio-head h2 { font-size: 17px; }
+.studio-tab { height: 28px; padding: 0 11px; font-size: 11.5px; }
+.studio-note, .studio-status { font-size: 12px; line-height: 1.6; }
+.studio-subheading { font-size: 10px; }
+.studio-row > input, .studio-row > select, .studio-form textarea, .studio-form > input { font-size: 12px; padding: 9px 10px; }
+.studio-button { height: 32px; padding: 0 12px; font-size: 11.5px; }
+.studio-list > li, .studio-memory, .studio-session, .studio-skill, .studio-result, .studio-schedule { font-size: 11.5px; padding: 9px 10px; }
+.studio-list b, .studio-memory b, .studio-session b, .studio-skill b, .studio-result b, .studio-schedule b { font-size: 12px; }
+.studio-list span, .studio-memory span, .studio-session span, .studio-skill span, .studio-result span, .studio-schedule span { font-size: 11px; }
+.studio-detail { font-size: 11px; }
+.studio-detail-head { font-size: 12.5px; }
+.studio-memory button, .studio-skill button, .studio-schedule button, .studio-list button { height: 26px; font-size: 10.5px; }
+.studio-metrics > * { font-size: 11px; }
+.studio-metrics strong { font-size: 16px; }

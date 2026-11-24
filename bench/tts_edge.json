@@ -1,0 +1,75 @@
+{
+  "module": "tts_edge",
+  "note": "draft + reczne; tylko przypadki zgodne z obecnym zachowaniem",
+  "cases": [
+    {
+      "call": "voices",
+      "kwargs": {},
+      "expect": [
+        {
+          "id": "en-GB-RyanNeural",
+          "label": "Ryan — British male",
+          "lang": "en-GB",
+          "gender": "Male"
+        },
+        {
+          "id": "en-GB-ThomasNeural",
+          "label": "Thomas — British male",
+          "lang": "en-GB",
+          "gender": "Male"
+        },
+        {
+          "id": "en-GB-SoniaNeural",
+          "label": "Sonia — British female",
+          "lang": "en-GB",
+          "gender": "Female"
+        },
+        {
+          "id": "en-GB-LibbyNeural",
+          "label": "Libby — British female",
+          "lang": "en-GB",
+          "gender": "Female"
+        },
+        {
+          "id": "pl-PL-MarekNeural",
+          "label": "Marek — Polish male",
+          "lang": "pl-PL",
+          "gender": "Male"
+        },
+        {
+          "id": "pl-PL-ZofiaNeural",
+          "label": "Zofia — Polish female",
+          "lang": "pl-PL",
+          "gender": "Female"
+        }
+      ],
+      "level": 1
+    },
+    {
+      "call": "synthesize",
+      "kwargs": {
+        "text": 123
+      },
+      "expect_error": true,
+      "level": 2
+    },
+    {
+      "call": "synthesize",
+      "kwargs": {
+        "text": "   ",
+        "voice": "en-GB-RyanNeural"
+      },
+      "expect_error": true,
+      "level": 2
+    },
+    {
+      "call": "synthesize",
+      "kwargs": {
+        "text": "hello",
+        "voice": 42
+      },
+      "expect_error": true,
+      "level": 2
+    }
+  ]
+}

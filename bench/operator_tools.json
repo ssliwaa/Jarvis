@@ -1,0 +1,55 @@
+{
+  "module": "operator_tools",
+  "note": "draft + reczne; tylko przypadki zgodne z obecnym zachowaniem",
+  "cases": [
+    {
+      "call": "redact",
+      "kwargs": {
+        "text": "token: abcdefgh and sk-or-1234567890"
+      },
+      "expect": "[REDACTED] and [REDACTED]",
+      "level": 1
+    },
+    {
+      "call": "format_size",
+      "kwargs": {
+        "size": 0
+      },
+      "expect": "0.0 B",
+      "level": 2
+    },
+    {
+      "call": "format_size",
+      "kwargs": {
+        "size": 1536
+      },
+      "expect": "1.5 KB",
+      "level": 2
+    },
+    {
+      "call": "resolve_path",
+      "kwargs": {
+        "raw": ""
+      },
+      "expect_error": true,
+      "level": 2
+    },
+    {
+      "call": "resolve_path",
+      "kwargs": {
+        "raw": 123
+      },
+      "expect_error": true,
+      "level": 2
+    },
+    {
+      "call": "redact",
+      "kwargs": {
+        "text": "hello world",
+        "limit": 5
+      },
+      "expect": "hello",
+      "level": 2
+    }
+  ]
+}

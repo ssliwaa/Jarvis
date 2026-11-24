@@ -1,0 +1,68 @@
+{
+  "module": "evidence_bay",
+  "note": "draft + reczne; tylko przypadki zgodne z obecnym zachowaniem",
+  "cases": [
+    {
+      "call": "scan_fingerprints",
+      "kwargs": {
+        "sources": []
+      },
+      "expect": [],
+      "level": 2
+    },
+    {
+      "call": "other_banners",
+      "kwargs": {
+        "sources": [
+          {
+            "text": "",
+            "url": "http://x/a.js",
+            "captured_by": "REA"
+          }
+        ]
+      },
+      "expect": [],
+      "level": 2
+    },
+    {
+      "call": "select_target",
+      "kwargs": {
+        "list_data": {},
+        "requested_url": "http://x.com"
+      },
+      "expect_error": true,
+      "level": 2
+    },
+    {
+      "call": "extract_sources",
+      "kwargs": {
+        "inspect_data": {
+          "normalized_result": {
+            "scripts": {
+              "items": [
+                {
+                  "url": "http://x/a.js",
+                  "source": {
+                    "artifact": {
+                      "text": "héllo ünïcode",
+                      "sha256": "abc"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      },
+      "expect": [
+        {
+          "url": "http://x/a.js",
+          "sha256": "abc",
+          "text": "héllo ünïcode",
+          "captured_by": "REA"
+        }
+      ],
+      "level": 2
+    }
+  ]
+}

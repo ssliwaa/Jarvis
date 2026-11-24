@@ -1,0 +1,29 @@
+config.json
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+server.log
+server.pid
+viewer/graph-data.js
+viewer/persona.js
+.preflight.lock
+artifacts/
+desktop/node_modules/
+viewer/.orbit-backup/
+repomix-output.xml
+# Scratch & session-local tooling artefacts (never ship)
+.agents/
+.claude/
+.omh/
+.jarvis-*
+
+# Personal working notes and logs — never ship
+tasks/
+AGENT_LOG.md
+operator_modules/commute_weather.py
+*.db
+*.db-wal
+*.db-shm
+CANARY-*

@@ -1,0 +1,30 @@
+{
+  "module": "verify_evidence",
+  "note": "draft + reczne; tylko przypadki zgodne z obecnym zachowaniem",
+  "cases": [
+    {
+      "call": "pids_referencing",
+      "kwargs": {
+        "path": "/tmp/üñïçødé-needle"
+      },
+      "expect": [],
+      "level": 2
+    },
+    {
+      "call": "port_open",
+      "kwargs": {
+        "port": 1
+      },
+      "expect": false,
+      "level": 2
+    },
+    {
+      "call": "port_open",
+      "kwargs": {
+        "port": 70000
+      },
+      "expect_error": true,
+      "level": 2
+    }
+  ]
+}

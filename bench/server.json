@@ -1,0 +1,46 @@
+{
+  "module": "server",
+  "note": "draft + reczne; tylko przypadki zgodne z obecnym zachowaniem",
+  "cases": [
+    {
+      "call": "conversational_reply",
+      "kwargs": {
+        "message": "hello"
+      },
+      "expect": "Hello, sir. The atlas is awake and your notes are at hand.",
+      "level": 1
+    },
+    {
+      "call": "conversational_reply",
+      "kwargs": {
+        "message": ""
+      },
+      "expect": null,
+      "level": 2
+    },
+    {
+      "call": "conversational_reply",
+      "kwargs": {
+        "message": null
+      },
+      "expect": null,
+      "level": 2
+    },
+    {
+      "call": "conversational_reply",
+      "kwargs": {
+        "message": "Hello!"
+      },
+      "expect": "Hello, sir. The atlas is awake and your notes are at hand.",
+      "level": 2
+    },
+    {
+      "call": "conversational_reply",
+      "kwargs": {
+        "message": "What is the capital of France?"
+      },
+      "expect": null,
+      "level": 2
+    }
+  ]
+}

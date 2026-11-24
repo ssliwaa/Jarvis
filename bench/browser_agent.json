@@ -1,0 +1,38 @@
+{
+  "module": "browser_agent",
+  "note": "draft + reczne; tylko przypadki zgodne z obecnym zachowaniem",
+  "cases": [
+    {
+      "call": "_url",
+      "kwargs": {
+        "url": "ftp://example.com/file"
+      },
+      "expect_error": true,
+      "level": 2
+    },
+    {
+      "call": "_is_private_http",
+      "kwargs": {
+        "url": "http://192.168.1.1/"
+      },
+      "expect": true,
+      "level": 2
+    },
+    {
+      "call": "_is_private_http",
+      "kwargs": {
+        "url": "https://1.1.1.1/"
+      },
+      "expect": false,
+      "level": 2
+    },
+    {
+      "call": "_is_private_http",
+      "kwargs": {
+        "url": "http://[::1]/"
+      },
+      "expect": true,
+      "level": 2
+    }
+  ]
+}

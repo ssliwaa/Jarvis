@@ -1,0 +1,29 @@
+{
+  "sealed_at": 1792959559.4349768,
+  "files": {
+    "app_identity.json": "b8e5e4db3b1f161a597d829907f80cd62ea40a239ed38a30202d8eff737b7f82",
+    "browser_agent.json": "ea2b5f7c1124b428b3295ad64634e7a2f8ab00873c77ab21b47e703d1244aa69",
+    "browser_bay.json": "0451e01b060126129a3259a81f230e2b06d11eac226392d7ebe979097fcf559e",
+    "clipboard.json": "852ead7afb79ad34d6a24b3bae40253d46cc4ed6a9d48ac7a4c35c98229a236e",
+    "documents.json": "8a00c3fb0fa6e13daa579baf4108f41eeb6206f16c2eb4824e95edc5032f7d5c",
+    "evidence_bay.json": "533fd39912238d73989adc0ca048b7faaed3c6a568f304cb773358429efa75f6",
+    "file_organizer.json": "c33fb4ff4aa1a9712356e40560260f87db1680a6b898952ed686b90a9e964577",
+    "mcp_client.json": "9a72e57058b6363a88a60940ea3edf0c14ef478c76617f8f9e5efa9759870248",
+    "memory_store.json": "09b5f32fad0f57d3f7f4da962bcade739bad763f7ebfb61909933f806cb86dd2",
+    "operator_cases.json": "803f4453ec3c83aa0185e273055d6ceaf916c9fd358e112d7185ec398bfb3a3a",
+    "operator_tools.json": "32de4b46cb735e65ca33c0eb1811ca1bd28ad18111e811f136e07c9604d39dd4",
+    "operator_verify.json": "406da09c8770a37213af61667a2a9b4e9d4d839ff0eda74367e2907fa670cc6f",
+    "provider_client.json": "a50d58bfb8524d68531932fa79208ac6f7da2ce17a183c7bf38139b9b13a93d7",
+    "retrieval.json": "3432df21c36caa64ebd4962596ee2aff6a8dc7d00254e357bcdf1507ac576827",
+    "router.json": "4f61a8d989e8fa366e0548e00012b80deeaa2bac001cae1c7987038214ad5cfb",
+    "server.json": "13aa6f303844521aca6c6f99bfe40a491ec27d22ae53cf53214ffa891f876f42",
+    "session_store.json": "2852a50772a224da1aebbc32ce95c3833138fdc4290cd31cf45ce4a86e531eec",
+    "skills_store.json": "4d5b32cb6d83950a0895e7b95a176f8696cc16e44699188cf3667c577dfec979",
+    "system_monitor.json": "984336c3fd6f6b55ebcc45c3b6e1f1b1855f8159367f512365c9d8cfe890c80d",
+    "systemd_notify.json": "86418d7649c3242c151a31c807a6bbd427d1f3ff11a53af317407d6637bb8fcd",
+    "teardown_brain.json": "b6f8ad165aef02e13b40b76fe2ab93e2549a5e2eee1c9129d7ada2d28593f180",
+    "tts_edge.json": "d7ea3dfa8c275f0446cf6e5156da527ad3ac53386972fbeacd4367d7272dbce3",
+    "verify_evidence.json": "f3b0a7d2e307ffce8d320143309546ef70d34aeb6c78eb6241de97ebdbb79488",
+    "web_research.json": "164495a998656118eed172d9933710a999845390f2f268371d45f11f15242c9a"
+  }
+}

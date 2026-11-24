@@ -1,0 +1,42 @@
+{
+  "module": "skills_store",
+  "notebrake": "reczne; katalog przez prepare",
+  "cases": [
+    {
+      "call": "_frontmatter",
+      "kwargs": {
+        "text": "---\nname: demo\n---\nTresc"
+      },
+      "expect_subset": {
+        "name": "demo"
+      },
+      "level": 1
+    },
+    {
+      "call": "_frontmatter",
+      "expect_subset": {},
+      "level": 2,
+      "kwargs": {
+        "text": "bez frontmattera"
+      }
+    },
+    {
+      "call": "SkillStore",
+      "prepare": "import os\nd = tmp + '/sk'\nos.makedirs(d + '/demo', exist_ok=True)\nopen(d + '/demo/SKILL.md', 'w').write('---\\nname: demo\\ndescription: Pomaga w X\\n---\\nKrok 1')\nscope['instance'] = module.SkillStore(__import__('pathlib').Path(d))",
+      "method": "list",
+      "expect_type": "list",
+      "level": 1
+    },
+    {
+      "call": "SkillStore",
+      "prepare": "import os\nd = tmp + '/sk'\nos.makedirs(d + '/demo', exist_ok=True)\nopen(d + '/demo/SKILL.md', 'w').write('---\\nname: demo\\ndescription: Pomaga w X\\n---\\nKrok 1')\nscope['instance'] = module.SkillStore(__import__('pathlib').Path(d))",
+      "method": "view",
+      "kwargs": {
+        "name": "demo"
+      },
+      "expect_contains": "Krok 1",
+      "level": 2
+    }
+  ],
+  "note": "reczne; katalog przez prepare"
+}

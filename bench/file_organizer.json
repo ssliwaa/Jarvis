@@ -1,0 +1,56 @@
+{
+  "module": "file_organizer",
+  "note": "draft + reczne; tylko przypadki zgodne z obecnym zachowaniem",
+  "cases": [
+    {
+      "call": "trash",
+      "kwargs": {
+        "paths": [],
+        "confirm": true
+      },
+      "expect_error": true,
+      "level": 2
+    },
+    {
+      "call": "trash",
+      "kwargs": {
+        "paths": [
+          "/tmp/x.txt"
+        ],
+        "confirm": false
+      },
+      "expect_error": true,
+      "level": 2
+    },
+    {
+      "call": "restore",
+      "kwargs": {
+        "batch": "no-such-batch",
+        "confirm": true
+      },
+      "expect_error": true,
+      "level": 2
+    },
+    {
+      "call": "restore_archive",
+      "kwargs": {
+        "batch": "no-such-batch",
+        "confirm": false
+      },
+      "expect": {
+        "ok": false,
+        "dry_run": true,
+        "error": "restore_archive requires confirm:true"
+      },
+      "level": 2
+    },
+    {
+      "call": "scan",
+      "kwargs": {
+        "root": "relative/path"
+      },
+      "expect_error": true,
+      "level": 2
+    }
+  ]
+}

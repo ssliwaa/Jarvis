@@ -1,0 +1,47 @@
+{
+  "module": "system_monitor",
+  "notebrake": "rec reform",
+  "cases": [
+    {
+      "call": "_read",
+      "kwargs": {
+        "path": "/proc/loadavg",
+        "default": "x"
+      },
+      "expect_contains": ".",
+      "level": 1
+    },
+    {
+      "call": "_read",
+      "kwargs": {
+        "path": "/nope/nope",
+        "default": "fallback"
+      },
+      "expect": "fallback",
+      "level": 1
+    },
+    {
+      "call": "_memory",
+      "kwargs": {},
+      "expect_type": "dict",
+      "level": 2
+    },
+    {
+      "call": "_processes",
+      "kwargs": {
+        "limit": 3
+      },
+      "expect_type": "list",
+      "level": 2
+    },
+    {
+      "call": "snapshot",
+      "kwargs": {},
+      "expect_subset": {
+        "cpu_count": null
+      },
+      "level": 2
+    }
+  ],
+  "note": "reczne; bez stanu zewnetrznego"
+}

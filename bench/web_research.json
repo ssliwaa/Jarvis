@@ -1,0 +1,64 @@
+{
+  "module": "web_research",
+  "notebrake": "held-out; bez sieci",
+  "cases": [
+    {
+      "call": "should_research",
+      "kwargs": {
+        "query": "ile kosztuje rower"
+      },
+      "expect": true,
+      "level": 1
+    },
+    {
+      "call": "should_research",
+      "kwargs": {
+        "query": "jaka jest pogoda w Warszawie"
+      },
+      "expect": true,
+      "level": 1
+    },
+    {
+      "call": "should_research",
+      "kwargs": {
+        "query": "co to jest rekuperacja"
+      },
+      "expect": false,
+      "level": 2
+    },
+    {
+      "call": "extract_price",
+      "kwargs": {
+        "text": "cena 129,99 zł"
+      },
+      "expect_subset": {
+        "price": "129.99"
+      },
+      "level": 1
+    },
+    {
+      "call": "extract_price",
+      "kwargs": {
+        "text": "brak ceny"
+      },
+      "expect": {},
+      "level": 2
+    },
+    {
+      "call": "_canonical",
+      "kwargs": {
+        "url": "https://example.com/a/?utm_source=x"
+      },
+      "level": 2,
+      "expect": "https://example.com/a/"
+    },
+    {
+      "call": "_canonical",
+      "kwargs": {
+        "url": "https://example.com/a?fbclid=abc&utm_source=x"
+      },
+      "expect": "https://example.com/a",
+      "level": 2
+    }
+  ]
+}

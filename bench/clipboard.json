@@ -1,0 +1,36 @@
+{
+  "module": "clipboard",
+  "note": "draft + reczne; tylko przypadki zgodne z obecnym zachowaniem",
+  "cases": [
+    {
+      "call": "available",
+      "kwargs": {},
+      "expect": true,
+      "level": 1
+    },
+    {
+      "call": "read",
+      "kwargs": {},
+      "expect_error": true,
+      "level": 2
+    },
+    {
+      "call": "read",
+      "kwargs": {},
+      "expect_error": true,
+      "level": 2
+    },
+    {
+      "call": "read",
+      "kwargs": {},
+      "expect_error": true,
+      "level": 2
+    },
+    {
+      "call": "available",
+      "kwargs": {},
+      "expect": true,
+      "level": 2
+    }
+  ]
+}

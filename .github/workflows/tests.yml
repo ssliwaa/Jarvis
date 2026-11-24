@@ -1,0 +1,36 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    env:
+      # Tests that need the developer's real vault, Hermes profile, Piper
+      # binary or a running desktop skip themselves in CI.
+      JARVIS_VERIFY_SANDBOX: "1"
+      TMPDIR: /tmp
+      TZ: Europe/Warsaw
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Git identity for real-git tests
+        run: |
+          git config --global user.email "ci@jarvis.local"
+          git config --global user.name "Jarvis CI"
+          git config --global init.defaultBranch main
+      - name: Install test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+      - name: Lint
+        run: python scripts/lint.py
+      - name: Unit tests
+        run: python -m unittest discover -s tests -v

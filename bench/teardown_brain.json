@@ -1,0 +1,49 @@
+{
+  "module": "teardown_brain",
+  "note": "draft + reczne; tylko przypadki zgodne z obecnym zachowaniem",
+  "cases": [
+    {
+      "call": "canonical_host",
+      "kwargs": {
+        "url": "https://www.example.com/path"
+      },
+      "expect": "example.com",
+      "level": 1
+    },
+    {
+      "call": "canonical_host",
+      "kwargs": {
+        "url": "not a url"
+      },
+      "expect": "site",
+      "level": 2
+    },
+    {
+      "call": "note_stem_for",
+      "kwargs": {
+        "url": "https://www.Ex.com/a",
+        "date": "2024-01-01"
+      },
+      "expect": "ex.com-2024-01-01",
+      "level": 2
+    },
+    {
+      "call": "parse_brain_output",
+      "kwargs": {
+        "text": "garbage",
+        "expected_host": "example.com"
+      },
+      "expect_error": true,
+      "level": 2
+    },
+    {
+      "call": "parse_brain_output",
+      "kwargs": {
+        "text": "LABEL: Teardown · other.com\nSPOKEN: x\nSUMMARY: y\n---NOTE---\n# Teardown · other.com — 2024\n\n**Verdict:** ok\n\n## The answer\n\n## The stack\n\n## How the effect works\n\n## What it loads\n\n## Rebuild it\n\n## What the evidence can't show\n",
+        "expected_host": "example.com"
+      },
+      "expect_error": true,
+      "level": 2
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+extend-exclude = [".venv", "desktop/node_modules", "artifacts", "viewer/graph-data.js", ".agents"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E501"]
+
+[tool.pyright]
+include = ["server.py", "browser_agent.py", "operator_tools.py", "provider_client.py",
+           "self_modify.py", "evolution.py", "memory_store.py", "session_store.py",
+           "web_research.py", "net_guard.py", "sqlite_guard.py"]
+pythonVersion = "3.12"
+typeCheckingMode = "basic"
+reportMissingImports = "warning"

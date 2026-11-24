@@ -1,0 +1,107 @@
+{
+  "module": "router",
+  "note": "draft; tylko przypadki zgodne z obecnym zachowaniem",
+  "cases": [
+    {
+      "call": "classify",
+      "kwargs": {
+        "message": ""
+      },
+      "expect": {
+        "intent": "empty",
+        "confidence": 0.0,
+        "action": "chat",
+        "task": "",
+        "needs_confirmation": false,
+        "reason": "empty message",
+        "label": "EMPTY"
+      },
+      "level": 1
+    },
+    {
+      "call": "classify",
+      "kwargs": {
+        "message": "Pogoda w Warszawie na jutro"
+      },
+      "level": 2,
+      "expect_subset": {
+        "intent": "web",
+        "action": "web",
+        "needs_confirmation": false,
+        "label": "WEB RESEARCH"
+      }
+    },
+    {
+      "call": "classify",
+      "kwargs": {
+        "message": "teardown please"
+      },
+      "level": 2,
+      "expect_subset": {
+        "intent": "teardown",
+        "action": "teardown",
+        "confidence": 1.0,
+        "needs_confirmation": false,
+        "label": "TEARDOWN"
+      }
+    },
+    {
+      "call": "classify",
+      "kwargs": {
+        "message": "Zapamiętaj: kupić mleko 🥛"
+      },
+      "level": 2,
+      "expect_subset": {
+        "intent": "memory",
+        "action": "memory",
+        "label": "MEMORY"
+      }
+    },
+    {
+      "call": "classify",
+      "kwargs": {
+        "message": "otwórz raport.pdf"
+      },
+      "level": 2,
+      "expect_subset": {
+        "intent": "operator",
+        "action": "operator",
+        "confidence": 0.92,
+        "needs_confirmation": false,
+        "label": "OPERATOR · plan ready"
+      }
+    },
+    {
+      "call": "classify",
+      "kwargs": {
+        "message": null
+      },
+      "level": 2,
+      "expect_subset": {
+        "intent": "empty",
+        "action": "chat",
+        "label": "EMPTY"
+      }
+    },
+    {
+      "call": "classify",
+      "kwargs": {
+        "message": "przypomnij mi jutro o 8:00 o treningu"
+      },
+      "expect_subset": {
+        "intent": "memory"
+      },
+      "level": 2
+    },
+    {
+      "call": "classify",
+      "kwargs": {
+        "message": "ile kosztuje rower górski"
+      },
+      "expect_subset": {
+        "intent": "web"
+      },
+      "level": 2
+    }
+  ]
+}

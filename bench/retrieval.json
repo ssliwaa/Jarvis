@@ -1,0 +1,64 @@
+{
+  "module": "retrieval",
+  "note": "draft + reczne; tylko przypadki zgodne z obecnym zachowaniem",
+  "cases": [
+    {
+      "call": "fold",
+      "kwargs": {
+        "text": "Zażółć Gęślą Jaźń"
+      },
+      "expect": "zazolc gesla jazn",
+      "level": 1
+    },
+    {
+      "call": "terms",
+      "kwargs": {
+        "text": "the and the of"
+      },
+      "expect": [],
+      "level": 2
+    },
+    {
+      "call": "terms",
+      "kwargs": {
+        "text": ""
+      },
+      "expect": [],
+      "level": 2
+    },
+    {
+      "call": "fold",
+      "kwargs": {
+        "text": null
+      },
+      "expect": "",
+      "level": 2
+    },
+    {
+      "call": "fold",
+      "kwargs": {
+        "text": "Zażółć Gęślą"
+      },
+      "expect": "zazolc gesla",
+      "level": 1
+    },
+    {
+      "call": "terms",
+      "kwargs": {
+        "text": "The a an is"
+      },
+      "expect": [],
+      "level": 2
+    },
+    {
+      "call": "terms",
+      "kwargs": {
+        "text": 123
+      },
+      "expect": [
+        "123"
+      ],
+      "level": 2
+    }
+  ]
+}

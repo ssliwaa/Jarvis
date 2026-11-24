@@ -1,0 +1,98 @@
+/* Capability map: a grid of cards in the same language as the tool armour
+   sheet from the reference UI — icon tile, name, one-line description, action. */
+.capability-overlay { position: fixed; inset: 0; z-index: 32; }
+.capability-backdrop { position: absolute; inset: 0; background: rgba(2, 5, 6, .74); backdrop-filter: blur(4px); }
+.capability-card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(760px, calc(100vw - 40px));
+  max-height: min(80vh, 760px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  background: var(--panel);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, .6);
+  overflow: auto;
+}
+.capability-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.capability-eyebrow { display: block; font-family: var(--mono); font-size: 8px; letter-spacing: .14em; color: var(--dim); }
+.capability-head h2 { font-size: 15px; font-weight: 600; margin-top: 3px; }
+.capability-status { font-size: 10.5px; line-height: 1.55; color: var(--dim); }
+.capability-status[data-state="error"] { color: var(--danger); }
+.capability-quick { display: flex; flex-wrap: wrap; gap: 6px; }
+.capability-button {
+  height: 28px;
+  padding: 0 11px;
+  border: 1px solid var(--line-strong);
+  border-radius: 6px;
+  background: var(--panel-2);
+  color: var(--muted);
+  font-size: 10.5px;
+}
+.capability-button:hover { color: var(--text); border-color: var(--accent-line); }
+.capability-button.primary { background: var(--accent); border-color: var(--accent); color: #04120b; font-weight: 600; }
+.capability-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 6px;
+}
+.capability-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: "tag tag" "title action" "desc desc";
+  gap: 3px 8px;
+  padding: 9px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel-2);
+  text-align: left;
+  color: var(--muted);
+  min-width: 0;
+}
+.capability-item:hover { border-color: var(--accent-line); background: var(--panel-3); }
+.capability-item b { grid-area: title; font-size: 11.5px; font-weight: 550; color: var(--text); line-height: 1.35; }
+.capability-item > span:not(.capability-tag) {
+  grid-area: desc;
+  font-size: 10px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.capability-item .capability-tag {
+  grid-area: tag;
+  justify-self: start;
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: .1em;
+  color: var(--dim);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 1px 5px;
+  display: inline-block;
+}
+.capability-item .capability-open {
+  grid-area: action;
+  align-self: center;
+  justify-self: end;
+  height: 22px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--dim);
+  font-size: 9.5px;
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+.capability-item .capability-open:hover { color: #04120b; background: var(--accent); border-color: var(--accent); }
+.capability-limits { border-top: 1px solid var(--line); padding-top: 8px; }
+.capability-limits summary { font-family: var(--mono); font-size: 8.5px; letter-spacing: .12em; color: var(--dim); cursor: pointer; }
+.capability-limits ul { margin: 8px 0 0; padding-left: 16px; font-size: 10.5px; line-height: 1.6; color: var(--muted); }
+@media (max-width: 720px) {
+  .capability-card { width: calc(100vw - 20px); padding: 12px; }
+  .capability-grid { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,18 @@
+{
+  "description": "Vendor manifest for the viewer pack (audit fix P3). The SRI digests are the exact ones pinned in viewer/index.html before the vendor patch; the core 'python -m hardening vendor' downloads these URLs and refuses any bytes that do not match.",
+  "schema_version": 1,
+  "assets": [
+    {
+      "target": "viewer/vendor/three.min.js",
+      "url": "https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.min.js",
+      "version": "0.160.1",
+      "sri": "sha384-qOkzR5Ke/XkQxuGVJ9hpFEpDlcoLtWwVYhnJf06cLIZa2vaIptSqaubivErzmD5O"
+    },
+    {
+      "target": "viewer/vendor/3d-force-graph.min.js",
+      "url": "https://cdn.jsdelivr.net/npm/3d-force-graph@1.79.0/dist/3d-force-graph.min.js",
+      "version": "1.79.0",
+      "sri": "sha384-I8xUqUlkgn1YFxE2iHhBohLpcR9rKT9MSaKUFK/+opyNDd5UX5j98GymiICW9V76"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "module": "memory_store",
+  "cases": [
+    {
+      "call": "_tokens",
+      "kwargs": {
+        "text": "Lubię krótkie odpowiedzi"
+      },
+      "expect_contains": "lubię",
+      "level": 1
+    },
+    {
+      "call": "_tokens",
+      "kwargs": {
+        "text": ""
+      },
+      "expect": [],
+      "level": 1
+    },
+    {
+      "call": "_tokens",
+      "kwargs": {
+        "text": "a b c"
+      },
+      "expect": [],
+      "level": 2
+    }
+  ]
+}

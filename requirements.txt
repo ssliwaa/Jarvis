@@ -1,0 +1,22 @@
+anthropic==1.15.0
+edge-tts==7.3.1
+# provider_client imports httpx2 directly; it is also an anthropic dependency.
+httpx2==2.15.1
+
+python-docx==1.2.0
+openpyxl==3.1.5
+python-pptx==1.0.2
+reportlab==5.0.1
+
+# Optional extras installed by hand on this host, deliberately not pinned here:
+#   playwright (with Chrome for Testing), numpy, httpx2, pypdf, pytesseract
+#   fastembed 0.9.0 + onnxruntime + tokenizers + loguru + mmh3 + py-rust-stemmers
+#     onnxruntime must be >=1.24.2: earlier releases allowed TensorProto
+#     external-data path traversal (fixed in the 1.24 line).
+#     Install fastembed with --no-deps: its metadata pins pillow<13 and
+#     huggingface-hub<2.0 while this venv runs pillow 13 and hub 2.2. The model
+#     loads and embeds correctly (256 dims), so do not "fix" pip check by
+#     downgrading the shared stack.
+#   sqlite-vec: not used. The note and memory vector lanes do an exact numpy
+#     scan, which is faster and simpler at a few hundred rows.
+

@@ -1,0 +1,9 @@
+# Isolated crawler venv: ~/.jarvis-tools/venvs/web
+# web_runner.py runs under that interpreter; server.py never imports these.
+#
+# Pins are deliberate. As of 2026-10-24 PyPI still ships crawl4ai 0.9.5 while
+# the upstream SSRF/private-address fix is reported for 0.9.6, so web_runner
+# keeps its own pre-navigation route guard and post-response peer check.
+# Re-check the advisory and PyPI history before changing either pin.
+crawl4ai==0.9.5
+scrapling==0.5

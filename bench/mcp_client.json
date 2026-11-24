@@ -1,0 +1,25 @@
+{
+  "module": "mcp_client",
+  "note": "reczne; konfiguracja przez prepare",
+  "cases": [
+    {
+      "call": "MCPManager",
+      "prepare": "p = tmp + '/c.json'\nopen(p, 'w').write('{\"servers\": [{\"name\": \"srv\", \"command\": \"python3\"}]}')\nscope['kwargs'] = {'path': p}",
+      "expect_type": "object",
+      "level": 1
+    },
+    {
+      "prepare": "p = tmp + '/c2.json'\nopen(p, 'w').write('{\"servers\": [{\"name\": \"srv\", \"command\": \"python3\"}]}')\nscope['instance'] = module.MCPManager(p)",
+      "method": "status",
+      "expect": [
+        {
+          "name": "srv",
+          "running": false,
+          "tools": 0
+        }
+      ],
+      "level": 2,
+      "call": "MCPManager"
+    }
+  ]
+}

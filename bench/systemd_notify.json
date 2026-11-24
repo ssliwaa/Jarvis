@@ -1,0 +1,42 @@
+{
+  "module": "systemd_notify",
+  "note": "draft + reczne; tylko przypadki zgodne z obecnym zachowaniem",
+  "cases": [
+    {
+      "call": "notify",
+      "kwargs": {},
+      "expect": false,
+      "level": 1
+    },
+    {
+      "call": "start_watchdog",
+      "kwargs": {},
+      "expect": null,
+      "level": 2
+    },
+    {
+      "call": "notify",
+      "kwargs": {
+        "state": "WATCHDOG=1"
+      },
+      "expect": false,
+      "level": 2
+    },
+    {
+      "call": "start_watchdog",
+      "kwargs": {
+        "stop_event": null
+      },
+      "expect": null,
+      "level": 2
+    },
+    {
+      "call": "notify",
+      "kwargs": {
+        "state": "READY=1\r\nSTATUS=Ünïcode"
+      },
+      "expect": false,
+      "level": 2
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Jarvis
+GenericName=Knowledge galaxy and computer operator
+Comment=Jarvis — local notes, voice, REA and Operator
+Exec=jarvis-app
+Icon=jarvis
+Terminal=false
+Categories=Utility;Development;
+Keywords=jarvis;notes;knowledge;operator;ai;
+StartupNotify=true
+StartupWMClass=Jarvis

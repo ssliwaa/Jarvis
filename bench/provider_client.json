@@ -1,0 +1,71 @@
+{
+  "module": "provider_client",
+  "note": "draft + reczne; tylko przypadki zgodne z obecnym zachowaniem",
+  "cases": [
+    {
+      "call": "_tool_result_text",
+      "kwargs": {
+        "content": "plain result"
+      },
+      "expect": "plain result",
+      "level": 1
+    },
+    {
+      "call": "_tool_result_text",
+      "kwargs": {
+        "content": [
+          {
+            "type": "text",
+            "text": "a"
+          },
+          {
+            "type": "text",
+            "text": "b"
+          }
+        ]
+      },
+      "expect": "a\nb",
+      "level": 2
+    },
+    {
+      "call": "_tool_result_text",
+      "kwargs": {
+        "content": {
+          "key": "value"
+        }
+      },
+      "expect": "{\"key\": \"value\"}",
+      "level": 2
+    },
+    {
+      "call": "_tool_result_text",
+      "kwargs": {
+        "content": [
+          {
+            "type": "image",
+            "data": "x"
+          },
+          "fallback"
+        ]
+      },
+      "expect": "fallback",
+      "level": 2
+    },
+    {
+      "call": "_to_openai_messages",
+      "kwargs": {
+        "messages": []
+      },
+      "expect": [],
+      "level": 2
+    },
+    {
+      "call": "_to_openai_tools",
+      "kwargs": {
+        "tools": []
+      },
+      "expect": null,
+      "level": 2
+    }
+  ]
+}

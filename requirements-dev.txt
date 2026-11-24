@@ -1,0 +1,6 @@
+-r requirements.txt
+playwright==1.64.0
+pyflakes==4.0.3
+# Needed by the vector lane and the OCR preflight fixture.
+numpy==2.5.4
+Pillow==13.0.0

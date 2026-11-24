@@ -1,0 +1,61 @@
+{
+  "module": "app_identity",
+  "note": "draft + reczne; tylko przypadki zgodne z obecnym zachowaniem",
+  "cases": [
+    {
+      "call": "close",
+      "kwargs": {
+        "query": "anything",
+        "confirm": false
+      },
+      "expect": {
+        "ok": false,
+        "action": "close",
+        "outcome": "refused",
+        "error": "close requires confirm:true"
+      },
+      "level": 2
+    },
+    {
+      "call": "close",
+      "kwargs": {
+        "query": "anything"
+      },
+      "expect": {
+        "ok": false,
+        "action": "close",
+        "outcome": "refused",
+        "error": "close requires confirm:true"
+      },
+      "level": 2
+    },
+    {
+      "call": "focus",
+      "kwargs": {
+        "query": "Jarvis"
+      },
+      "expect": {
+        "ok": false,
+        "action": "focus",
+        "query": "Jarvis",
+        "outcome": "unverified",
+        "error": "No matching window is visible; launch the app first."
+      },
+      "level": 2
+    },
+    {
+      "call": "launch",
+      "kwargs": {
+        "query": "nonexistent-app-xyz"
+      },
+      "expect": {
+        "ok": false,
+        "action": "launch",
+        "query": "nonexistent-app-xyz",
+        "outcome": "failed",
+        "error": "No matching desktop application was found."
+      },
+      "level": 2
+    }
+  ]
+}

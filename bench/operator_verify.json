@@ -1,0 +1,94 @@
+{
+  "module": "operator_verify",
+  "note": "draft + reczne; tylko przypadki zgodne z obecnym zachowaniem",
+  "cases": [
+    {
+      "call": "verify",
+      "kwargs": {
+        "action": "terminal",
+        "arguments": {},
+        "result": {
+          "returncode": 0
+        }
+      },
+      "expect": {
+        "outcome": "done",
+        "detail": "The command exited with status 0."
+      },
+      "level": 1
+    },
+    {
+      "call": "verify",
+      "kwargs": {
+        "action": "write_file",
+        "arguments": {
+          "path": "/nonexistent_root_xyz/out.txt",
+          "content": "hi"
+        },
+        "result": {}
+      },
+      "level": 2
+    },
+    {
+      "call": "verify",
+      "kwargs": {
+        "action": "open_url",
+        "arguments": {},
+        "result": {
+          "url": "https://example.com"
+        }
+      },
+      "expect": {
+        "outcome": "done",
+        "detail": "The browser reports a loaded http(s) URL.",
+        "url": "https://example.com"
+      },
+      "level": 2
+    },
+    {
+      "call": "verify",
+      "kwargs": {
+        "action": "click",
+        "arguments": {},
+        "result": {
+          "ok": true
+        }
+      },
+      "expect": {
+        "outcome": "unverified",
+        "detail": "The browser accepted the action; the resulting page state was not proven."
+      },
+      "level": 2
+    },
+    {
+      "call": "verify",
+      "kwargs": {
+        "action": "terminal",
+        "arguments": {},
+        "result": {
+          "returncode": 1
+        }
+      },
+      "expect": {
+        "outcome": "failed",
+        "detail": "The command exited with status 1."
+      },
+      "level": 2
+    },
+    {
+      "call": "verify",
+      "kwargs": {
+        "action": "read_page",
+        "arguments": {},
+        "result": {
+          "ok": false
+        }
+      },
+      "expect": {
+        "outcome": "failed",
+        "detail": "The read returned ok=false."
+      },
+      "level": 2
+    }
+  ]
+}

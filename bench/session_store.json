@@ -1,0 +1,33 @@
+{
+  "module": "session_store",
+  "note": "reczne; baza w tmp",
+  "cases": [
+    {
+      "call": "SessionStore",
+      "method": "history",
+      "prepare": "scope['instance'] = module.SessionStore(__import__('pathlib').Path(tmp + '/s.db'))\nscope['instance'].append('t1', 'pytanie', 'odpowiedz')",
+      "kwargs": {
+        "token": "t1"
+      },
+      "expect_type": "list",
+      "level": 1
+    },
+    {
+      "call": "SessionStore",
+      "prepare": "scope['instance'] = module.SessionStore(__import__('pathlib').Path(tmp + '/s.db'))\nscope['instance'].append('t1', 'pytanie', 'odpowiedz')",
+      "method": "recent",
+      "expect_type": "list",
+      "level": 2
+    },
+    {
+      "call": "SessionStore",
+      "prepare": "scope['instance'] = module.SessionStore(__import__('pathlib').Path(tmp + '/s.db'))\nscope['instance'].append('t1', 'pytanie', 'odpowiedz')",
+      "method": "search",
+      "kwargs": {
+        "query": "pytanie"
+      },
+      "expect_type": "list",
+      "level": 2
+    }
+  ]
+}

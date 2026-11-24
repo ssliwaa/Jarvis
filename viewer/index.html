@@ -1,0 +1,627 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050708">
+  <meta name="description" content="Jarvis — a local knowledge console: notes as a living graph, a grounded chat, and an operator that acts.">
+  <title>Jarvis — Knowledge Console</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="voice.css">
+  <link rel="stylesheet" href="agent.css">
+  <link rel="stylesheet" href="studio.css">
+  <link rel="stylesheet" href="capabilities.css">
+  <script defer src="vendor/three.min.js"
+          integrity="sha384-qOkzR5Ke/XkQxuGVJ9hpFEpDlcoLtWwVYhnJf06cLIZa2vaIptSqaubivErzmD5O"
+          crossorigin="anonymous"></script>
+  <script defer src="vendor/3d-force-graph.min.js"
+          integrity="sha384-I8xUqUlkgn1YFxE2iHhBohLpcR9rKT9MSaKUFK/+opyNDd5UX5j98GymiICW9V76"
+          crossorigin="anonymous"></script>
+  <script defer src="graph-data.js"></script>
+  <script defer src="persona.js"></script>
+  <script defer src="api.js"></script>
+  <script defer src="events.js"></script>
+  <script defer src="voice.js"></script>
+  <script defer src="wake.js"></script>
+  <script defer src="app.js"></script>
+  <script defer src="agent.js"></script>
+  <script defer src="studio.js"></script>
+  <script defer src="agents.js"></script>
+  <script defer src="live-stages.js"></script>
+  <script defer src="mission.js"></script>
+  <script defer src="capabilities.js"></script>
+</head>
+<body>
+  <div id="graph" aria-label="Interactive three-dimensional map of your notes. Use the searchable note index for keyboard access."></div>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <aside class="rail" id="rail" aria-label="Atlas panel">
+    <header class="masthead">
+      <a class="brand" href="./" aria-label="Jarvis home"><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="9"/><ellipse cx="20" cy="20" rx="18" ry="6.5" transform="rotate(-32 20 20)"/><circle class="brand-star" cx="32" cy="11" r="2.2"/></svg><span>JARVIS<span class="brand-caption">KNOWLEDGE CONSOLE</span></span></a>
+      <p class="rail-stats"><strong id="node-count">—</strong> notes · <strong id="link-count">—</strong> connections</p>
+      <div class="system-state"><span class="signal-dot" aria-hidden="true"></span><span id="system-state">Connecting…</span></div>
+      <p id="boot-greeting" class="boot-greeting" role="status" aria-live="polite"></p>
+    </header>
+
+    <section id="atlas-panel" class="atlas-panel" aria-labelledby="atlas-heading">
+      <h1 id="atlas-heading" class="sr-only">Atlas</h1>
+      <form id="search-form" role="search" autocomplete="off">
+        <label class="sr-only" for="note-search">Search note titles</label>
+        <div class="search-field"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg><input id="note-search" type="search" placeholder="Search the brain…" aria-controls="note-results"><kbd aria-hidden="true">/</kbd></div>
+      </form>
+
+      <section id="note-panel" class="note-panel" aria-labelledby="note-title" tabindex="-1" hidden>
+        <div class="section-heading"><span class="eyebrow">NOTATKA</span><button id="close-note" class="icon-button" type="button" aria-label="Close note details">×</button></div>
+        <p id="note-group" class="note-group"></p>
+        <h2 id="note-title"></h2>
+        <p id="note-path" class="note-path"></p>
+        <div class="note-rule"></div>
+        <p id="note-excerpt" class="note-excerpt"></p>
+        <p class="excerpt-caption">EXCERPT · FROM YOUR MARKDOWN</p>
+        <div class="neighbour-heading"><h3>Connected notes</h3><span id="neighbour-count" class="count-badge">0</span></div>
+        <ul id="neighbour-list" class="neighbour-list"></ul>
+      </section>
+
+      <div id="note-browser" class="note-browser" hidden>
+        <div class="browser-header"><span id="search-count" role="status">All notes</span><button id="close-browser" class="text-button" type="button" aria-label="Close note index">Close ×</button></div>
+        <ul id="note-results" class="note-results" aria-label="Note titles"></ul>
+      </div>
+
+      <div class="section-head-row"><p class="section-label">AGENCI</p><button id="agents-refresh" class="text-button" type="button" aria-label="Odśwież stan agentów">Odśwież ↻</button></div>
+      <div id="agent-list" class="agent-list" aria-live="polite" aria-busy="true">
+        <p class="agent-empty">Wczytywanie agentów…</p>
+      </div>
+
+      <details class="settings-group" id="settings-group">
+        <summary class="section-label">USTAWIENIA</summary>
+
+      <p class="section-label">MENU</p>
+      <div class="slider-row"><label for="menu-scale">Menu size</label><input id="menu-scale" type="range" min="85" max="140" step="5" value="100"></div>
+
+      <p class="section-label">FORCES</p>
+      <div class="slider-row"><label for="force-repel">Repel</label><input id="force-repel" type="range" min="10" max="160" step="1" value="42"></div>
+      <div class="slider-row"><label for="force-link">Link length</label><input id="force-link" type="range" min="10" max="120" step="1" value="40"></div>
+
+      <p class="section-label">DISPLAY</p>
+      <label class="check-row" for="display-labels"><span>Hub labels</span><input id="display-labels" type="checkbox" checked></label>
+      <label class="check-row" for="display-particles"><span>Particle flow</span><input id="display-particles" type="checkbox" checked></label>
+      <label class="check-row" for="display-rotate"><span>Auto-rotate</span><input id="display-rotate" type="checkbox" checked></label>
+      <label class="check-row" for="display-stars"><span>Starfield</span><input id="display-stars" type="checkbox" checked></label>
+
+      <p class="section-label">CONNECTIONS</p>
+      <label class="check-row" for="display-connections"><span>Show connections</span><input id="display-connections" type="checkbox" checked></label>
+      <div class="slider-row"><label for="link-weight">Line weight</label><input id="link-weight" type="range" min="10" max="120" step="1" value="30"></div>
+
+      <p class="section-label">NODES</p>
+      <div class="slider-row"><label for="node-scale">Orb size</label><input id="node-scale" type="range" min="50" max="180" step="1" value="100"></div>
+
+      <p class="section-label">THEME</p>
+      <div class="theme-row" role="group" aria-label="Accent colour">
+        <button class="swatch is-active" type="button" data-accent="emerald" aria-label="Emerald" aria-pressed="true"></button>
+        <button class="swatch" type="button" data-accent="violet" aria-label="Violet" aria-pressed="false"></button>
+        <button class="swatch" type="button" data-accent="matrix" aria-label="Matrix green" aria-pressed="false"></button>
+        <button class="swatch" type="button" data-accent="cyan" aria-label="Cyan" aria-pressed="false"></button>
+      </div>
+      <div class="segmented" role="group" aria-label="Colouring mode">
+        <button id="mode-type" type="button" class="is-active" aria-pressed="true">By type</button>
+        <button id="mode-heat" type="button" aria-pressed="false">Heatmap</button>
+      </div>
+      <button id="reset-display" class="text-button reset-display" type="button">Reset view settings</button>
+      </details>
+    </section>
+  </aside>
+  <button id="rail-toggle" class="rail-toggle" type="button" aria-label="Collapse panel" aria-expanded="true" aria-controls="atlas-panel">‹</button>
+
+  <!-- Okienko planu zadania obok lewej kolumny -->
+  <section id="task-plan-box" class="task-plan-box" aria-label="Punkty zadania" hidden>
+    <div class="task-plan-head">
+      <div class="task-plan-badge-row">
+        <span class="plan-pulse-dot" aria-hidden="true"></span>
+        <span class="task-plan-badge">PLAN ZADANIA</span>
+        <span id="task-plan-state" class="task-plan-state">W TOKU</span>
+      </div>
+      <div class="task-plan-tools">
+        <span id="task-plan-counter" class="task-plan-counter">0/0</span>
+        <button id="task-plan-close" class="task-plan-close-btn" type="button" aria-label="Ukryj plan zadania" title="Ukryj plan">×</button>
+      </div>
+    </div>
+    <p id="task-plan-task" class="task-plan-task"></p>
+    <div class="task-plan-progress-track">
+      <div id="task-plan-progress-fill" class="task-plan-progress-fill"></div>
+    </div>
+    <ul id="task-plan-list" class="task-plan-list" aria-label="Lista punktów zadania"></ul>
+  </section>
+  <p class="rail-legend">drag = orbit · scroll = zoom · click = focus<br>shift-click = path · I = isolate · esc = clear</p>
+
+  <main class="stage">
+    <div class="viewport-bar" role="group" aria-label="Viewport controls">
+      <button id="reset-view" class="viewport-button" type="button" title="Fit the whole graph"><span aria-hidden="true">⌖</span> Fit</button>
+      <button id="follow-toggle" class="viewport-button icon-only" type="button" aria-pressed="false" title="Follow the agent's sources"><span aria-hidden="true">◎</span><span class="follow-dot" aria-hidden="true"></span></button>
+      <button id="vault-toggle" class="viewport-button icon-only" type="button" title="Reopen the last teardown"><svg viewBox="0 0 24 24" aria-hidden="true" style="width:13px;height:13px;stroke:currentColor;stroke-width:1.7;fill:none"><path d="M4 8h16v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><path d="M4 8V5a2 2 0 0 1 2-2h8l3 5"/></svg></button>
+      <button id="rotate-toggle" class="viewport-button icon-only" type="button" aria-pressed="true" title="Pause orbit"><span id="rotate-icon" aria-hidden="true">Ⅱ</span><span id="rotate-label" class="sr-only">Pause orbit</span></button>
+    </div>
+
+    <section id="answer-panel" class="answer-panel panel" aria-labelledby="answer-heading" hidden>
+      <div class="section-heading"><h2 id="answer-heading">From your universe</h2><button id="close-answer" class="icon-button" type="button" aria-label="Close answer">×</button></div>
+      <p id="asked-question" class="asked-question"></p>
+      <p id="answer-mode" class="answer-mode" hidden></p>
+      <p id="chat-answer" class="chat-answer" role="status" aria-live="polite"></p>
+      <p id="action-receipt" class="action-receipt" hidden></p>
+      <div id="chat-operator-card" class="chat-operator-card" hidden>
+        <div class="chat-operator-head">
+          <div class="chat-operator-title">
+            <span class="chat-operator-badge">OPERATOR</span>
+            <span id="chat-operator-status" class="chat-operator-status" data-state="idle">Idle</span>
+          </div>
+          <button id="chat-operator-stop" class="chat-operator-stop-btn" type="button" hidden>Stop</button>
+        </div>
+        <ol id="chat-operator-steps" class="chat-operator-steps" aria-label="Operator live steps"></ol>
+        <div id="chat-operator-pending" class="chat-operator-pending" hidden>
+          <p id="chat-operator-pending-text" class="chat-operator-pending-text"></p>
+          <div class="chat-operator-pending-actions">
+            <button id="chat-operator-approve" class="chat-operator-action-btn approve" type="button">Approve</button>
+            <button id="chat-operator-deny" class="chat-operator-action-btn deny" type="button">Deny</button>
+          </div>
+        </div>
+      </div>
+      <div id="sources-section" hidden><h3 class="source-heading">SOURCE NOTES</h3><ul id="source-list" class="source-list"></ul></div>
+      <div id="web-sources-section" hidden><h3 class="source-heading">WEB SOURCES</h3><ul id="web-source-list" class="source-list web-source-list"></ul></div>
+    </section>
+
+    <aside id="teardown-panel" class="teardown-panel panel" aria-labelledby="td-site" aria-live="polite" hidden>
+      <div class="td-head">
+        <div class="td-title"><span class="td-eyebrow">TEARDOWN</span><h2 id="td-site">—</h2></div>
+        <div class="td-head-tools"><span class="td-via">via REA</span><button id="td-close" class="icon-button" type="button" aria-label="Close teardown">×</button></div>
+      </div>
+      <p id="td-note" class="td-note" role="status" aria-live="polite"></p>
+      <ol id="td-steps" class="td-steps" aria-label="Teardown progress"></ol>
+      <div id="td-result" class="td-result" hidden>
+        <p id="td-fold" class="td-fold"></p>
+        <div id="td-snapshot-wrap" class="td-snapshot-wrap"><img id="td-snapshot" alt="Snapshot from the teardown"></div>
+        <div id="td-chips" class="td-chips" aria-label="Detected stack"></div>
+        <p id="td-totals" class="td-totals"></p>
+        <button id="td-read" class="td-read" type="button">Read the full teardown</button>
+      </div>
+    </aside>
+
+    <div id="graph-notice" class="graph-notice panel" role="status"><span class="notice-orbit" aria-hidden="true">◎</span><strong id="notice-title">Mapping your universe</strong><span id="notice-detail">Preparing the three-dimensional atlas…</span></div>
+
+    <section id="chat-dock" class="chat-dock" aria-label="Ask your notes">
+      <p id="voice-transcript" class="voice-transcript" aria-label="Recognized speech"></p>
+      <div class="command-row">
+        <form id="chat-form" class="command-bar" autocomplete="off">
+          <span class="ask-symbol" aria-hidden="true">✳</span>
+          <label class="sr-only" for="question">Ask a question about your notes</label>
+          <input id="question" type="text" placeholder='Ask · "remind me…" · "good morning"' maxlength="4000" required>
+          <button id="ask-button" type="submit" aria-label="Ask your notes"><span id="ask-label" class="sr-only">Ask</span><span aria-hidden="true">↵</span></button>
+        </form>
+        <div class="quick-actions" role="group" aria-label="Quick actions">
+          <button id="quick-mute" class="round-button" type="button" title="Stop speaking" aria-label="Stop speaking"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="m17 9 4 6m0-6-4 6"/></svg></button>
+          <button id="quick-log" class="round-button" type="button" title="Chat log and sessions" aria-label="Chat log"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 20 4-1 10-10-3-3L5 16l-1 4z"/><path d="M14 5l3 3"/></svg></button>
+          <button id="quick-screen" class="round-button" type="button" title="Operator screen" aria-label="Operator screen"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M9 20h6M12 16v4"/></svg></button>
+          <button id="quick-agents" class="round-button" type="button" title="What Jarvis can delegate" aria-label="Capabilities"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20a6.5 6.5 0 0 1 13 0"/></svg></button>
+          <button id="quick-skills" class="round-button" type="button" title="Skills library" aria-label="Skills"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3 11v2h6v-2a6 6 0 0 0-3-11z"/></svg></button>
+          <button id="mic-button" class="round-button mic" type="button" aria-label="Start listening" aria-pressed="false" title="Tap to talk — ask one question"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3m-4 0h8"/></svg></button>
+        </div>
+      </div>
+      <div class="voice-toolbar">
+        <label class="sr-only" for="voice-language">Recognition language</label>
+        <select id="voice-language" aria-label="Recognition language"><option value="en-GB">English (UK)</option><option value="pl-PL">Polski</option></select>
+        <label class="sr-only" for="voice-output">Spoken voice</label>
+        <select id="voice-output" aria-label="Spoken voice"><option value="edge:auto">Auto — Edge British (Ryan)</option><option value="browser:auto">Browser — Auto (English UK)</option></select>
+        <span id="voice-status" role="status" aria-live="polite" aria-atomic="true">Ready</span>
+        <div id="mic-level" class="mic-level" hidden aria-label="Microphone input level"><span id="mic-level-bar"></span><span class="mic-level-label">IN</span></div>
+        <button id="wake-toggle" type="button" aria-pressed="false" title="Enable local Hey Jarvis detection">Hey Jarvis: off</button>
+        <button id="stop-voice" type="button" aria-label="Interrupt voice and pending answer">Stop</button>
+        <span class="ptt-hint"><kbd>Ctrl</kbd> + <kbd>Space</kbd> talk</span>
+      </div>
+      <div class="dock-footer"><span>NOTES + GENERAL <button id="capability-link" class="dock-link" type="button">WHAT I CAN DO ?</button></span><span id="chat-state">Connections become understanding.</span></div>
+    </section>
+  </main>
+
+  <aside class="dock" aria-label="Jarvis status">
+    <section class="filter-panel" aria-labelledby="filter-heading">
+      <p class="section-label" id="filter-heading">FILTER</p>
+      <div id="filter-list" class="filter-list" aria-label="Filter by collection"></div>
+    </section>
+
+    <section class="core" aria-label="Jarvis core">
+      <div class="dial" id="dial" data-state="online" data-core="ring">
+        <div class="dial-ticks" aria-hidden="true"></div>
+        <div class="dial-arcs" aria-hidden="true"></div>
+        <div class="dial-cube" aria-hidden="true"><span></span><span></span><span></span></div>
+        <div class="dial-face" aria-hidden="true"></div>
+        <span class="dial-label">J.A.R.V.I.S.</span>
+      </div>
+      <div class="status-pills">
+        <span id="status-pill" class="pill status" data-state="online"><i aria-hidden="true"></i><span>ONLINE</span></span>
+        <button id="model-pill" class="pill model" type="button" title="Model configured on the server">DEEPSEEK</button>
+      </div>
+      <div class="segmented core-modes" role="group" aria-label="Core visualisation">
+        <button type="button" class="is-active" data-core-mode="ring" aria-pressed="true">RING</button>
+        <button type="button" data-core-mode="cube" aria-pressed="false">CUBE</button>
+        <button type="button" data-core-mode="face" aria-pressed="false">FACE</button>
+      </div>
+    </section>
+
+    <section class="modules" aria-label="Subsystems">
+      <div class="module" id="mod-eyes" title="Vision analysis via DeepSeek"><span>EYES</span><span id="mod-eyes-state">off</span></div>
+      <div class="module" id="mod-watch" title="Page and price change monitor"><span>WATCH</span><span id="mod-watch-state">off</span></div>
+      <div class="module" id="mod-files" title="File watch and folder observation"><span>FILES</span><span id="mod-files-state">off</span></div>
+      <div class="module" id="mod-beat" title="Background job heartbeat monitor"><span>BEAT</span><span id="mod-beat-state">off</span></div>
+      <div class="module" id="mod-agents" title="External coding agents sandbox"><span>AGENTS</span><span id="mod-agents-state">off</span></div>
+    </section>
+
+    <nav class="pill-stack" aria-label="Jarvis surfaces">
+      <button id="agent-toggle" class="agent-toggle" type="button" aria-expanded="false" aria-controls="agent-panel"><span class="agent-dot" aria-hidden="true"></span>OPERATOR</button>
+      <button id="studio-toggle" class="studio-toggle" type="button" aria-expanded="false" aria-controls="studio-panel"><span class="studio-dot" aria-hidden="true"></span>STUDIO</button>
+      <button id="capability-toggle" class="capability-toggle" type="button" aria-expanded="false" aria-controls="capability-overlay"><span aria-hidden="true">?</span> CAPABILITIES</button>
+    </nav>
+  </aside>
+
+
+  <aside id="agent-panel" class="agent-panel panel" aria-labelledby="agent-heading" hidden>
+    <div class="agent-head">
+      <div><span class="agent-eyebrow">SHELL / FILES / DESKTOP / WEB</span><h2 id="agent-heading">Jarvis operator</h2></div>
+      <button id="agent-close" class="icon-button" type="button" aria-label="Close agent panel">×</button>
+    </div>
+    <p id="agent-status" class="agent-status" role="status" aria-live="polite" data-state="idle">Idle. Give me a task.</p>
+    <div class="agent-mode-row">
+      <label for="agent-mode">AUTONOMY</label>
+      <select id="agent-mode">
+        <option value="safe">Safe — ask often</option>
+        <option value="standard" selected>Standard — ask on damage</option>
+        <option value="full">Full — autonomous</option>
+      </select>
+      <span id="agent-mode-note">Standard: shell and files, approvals on destructive actions.</span>
+    </div>
+    <form id="agent-form" class="agent-form">
+      <label class="sr-only" for="agent-task">Computer task</label>
+      <textarea id="agent-task" maxlength="4000" placeholder="Open an app, edit a file, run a command, use the browser…" required></textarea>
+      <div class="agent-actions"><button id="agent-start" class="agent-button primary" type="submit">Start operator</button><button id="agent-stop" class="agent-button danger" type="button" hidden>Stop</button></div>
+    </form>
+    <ol id="agent-steps" class="agent-steps" aria-label="Agent activity"></ol>
+    <section id="agent-subagents-wrap" class="agent-subagents-wrap" hidden>
+      <h3>Delegated research</h3>
+      <ul id="agent-subagents" class="agent-subagents" aria-label="Delegated subagents"></ul>
+    </section>
+    <div id="agent-pending" class="agent-pending" hidden>
+      <p id="agent-pending-text"></p>
+      <div class="agent-actions"><button id="agent-approve" class="agent-button primary" type="button">Approve once</button><button id="agent-deny" class="agent-button" type="button">Deny</button></div>
+    </div>
+    <div class="agent-actions"><button id="agent-ocr" class="agent-button" type="button">Read screenshot</button></div>
+    <pre id="agent-ocr-text" class="agent-ocr-text" hidden></pre>
+    <img id="agent-shot" class="agent-shot" alt="Latest agent browser screenshot" hidden>
+    <details id="agent-history" class="agent-history">
+      <summary>Recent jobs</summary>
+      <label class="sr-only" for="agent-history-filter">Filter job history</label>
+      <select id="agent-history-filter" aria-label="Filter job history"><option value="">All outcomes</option><option value="done">Done</option><option value="error">Errors</option><option value="stopped">Stopped</option></select>
+      <ol id="agent-history-list" class="agent-history-list"></ol>
+    </details>
+    <p class="agent-hint">Operator can use shell, files, a separate Chromium window, native apps via cua-driver and stored credentials. Full mode is autonomous; standard pauses on destructive actions. Stop always wins.</p>
+  </aside>
+
+  <aside id="team-panel" class="team-panel panel" aria-labelledby="team-heading" hidden>
+    <div class="agent-head">
+      <div><span class="agent-eyebrow">WORKTREE / CZAT / BRAMKA TESTOW</span><h2 id="team-heading">Zespół agentów</h2></div>
+      <button id="team-close" class="icon-button" type="button" aria-label="Zamknij pokój projektu">×</button>
+    </div>
+    <p id="team-status" class="agent-status" role="status" aria-live="polite">Wybierz projekt albo wpisz cel nowego.</p>
+    <div id="team-room" class="team-room"></div>
+  </aside>
+
+  <aside id="studio-panel" class="studio-panel panel" aria-labelledby="studio-heading" hidden>
+    <div class="studio-head">
+      <div><span class="studio-eyebrow">MEMORY / SESSIONS / SKILLS / WEB / MCP / SELF-MOD</span><h2 id="studio-heading">Jarvis studio</h2></div>
+      <button id="studio-close" class="icon-button" type="button" aria-label="Close studio panel">×</button>
+    </div>
+    <div class="studio-tabs" role="tablist" aria-label="Studio sections">
+      <button class="studio-tab" type="button" role="tab" aria-selected="true" aria-controls="studio-memory" data-studio-tab="memory">Memory</button>
+      <button class="studio-tab" type="button" role="tab" aria-selected="false" aria-controls="studio-sessions" data-studio-tab="sessions">Sessions</button>
+      <button class="studio-tab" type="button" role="tab" aria-selected="false" aria-controls="studio-skills" data-studio-tab="skills">Skills</button>
+      <button class="studio-tab" type="button" role="tab" aria-selected="false" aria-controls="studio-research" data-studio-tab="research">Web</button>
+      <button class="studio-tab" type="button" role="tab" aria-selected="false" aria-controls="studio-mcp" data-studio-tab="mcp">MCP</button>
+      <button class="studio-tab" type="button" role="tab" aria-selected="false" aria-controls="studio-schedules" data-studio-tab="schedules">Schedule</button>
+      <button class="studio-tab" type="button" role="tab" aria-selected="false" aria-controls="studio-overview" data-studio-tab="overview">Briefing</button>
+      <button class="studio-tab" type="button" role="tab" aria-selected="false" aria-controls="studio-system" data-studio-tab="system">System</button>
+      <button class="studio-tab" type="button" role="tab" aria-selected="false" aria-controls="studio-apps" data-studio-tab="apps">Apps</button>
+      <button class="studio-tab" type="button" role="tab" aria-selected="false" aria-controls="studio-docs" data-studio-tab="docs">Docs</button>
+      <button class="studio-tab" type="button" role="tab" aria-selected="false" aria-controls="studio-files" data-studio-tab="files">Files</button>
+      <button class="studio-tab" type="button" role="tab" aria-selected="false" aria-controls="studio-clipboard" data-studio-tab="clipboard">Clipboard</button>
+      <button class="studio-tab" type="button" role="tab" aria-selected="false" aria-controls="studio-reminders" data-studio-tab="reminders">Reminders</button>
+      <button class="studio-tab" type="button" role="tab" aria-selected="false" aria-controls="studio-watch" data-studio-tab="watch">Watch</button>
+      <button class="studio-tab" type="button" role="tab" aria-selected="false" aria-controls="studio-selfmod" data-studio-tab="selfmod">Selfmod</button>
+      <button class="studio-tab" type="button" role="tab" aria-selected="false" aria-controls="studio-mission" data-studio-tab="mission">Mission</button>
+    </div>
+    <p id="studio-status" class="studio-status" role="status" aria-live="polite">Local studio ready.</p>
+
+    <section id="studio-memory" class="studio-view" role="tabpanel" data-studio-view="memory">
+      <p class="studio-note">Durable personal facts. Writes are local and separate from the Sejf notes.</p>
+      <form id="memory-form" class="studio-form">
+        <div class="studio-row">
+          <label class="sr-only" for="memory-category">Memory category</label>
+          <select id="memory-category" aria-label="Memory category">
+            <option value="preferences">Preferences</option>
+            <option value="identity">Identity</option>
+            <option value="projects">Projects</option>
+            <option value="relations">Relations</option>
+            <option value="hardware">Hardware</option>
+            <option value="rules">Rules</option>
+            <option value="notes" selected>Notes</option>
+          </select>
+          <label class="sr-only" for="memory-key">Memory key</label>
+          <input id="memory-key" type="text" maxlength="120" placeholder="key" required>
+        </div>
+        <label class="sr-only" for="memory-value">Memory value</label>
+        <textarea id="memory-value" maxlength="4000" placeholder="What should Jarvis remember?" required></textarea>
+        <div class="studio-actions"><button class="studio-button primary" type="submit">Remember fact</button><button id="memory-refresh" class="studio-button" type="button">Refresh</button></div>
+      </form>
+      <div class="studio-row"><label class="sr-only" for="memory-recall">Recall memory</label><input id="memory-recall" type="text" placeholder="Recall a fact…"><button id="memory-recall-button" class="studio-button" type="button">Recall</button></div>
+      <ul id="memory-list" class="studio-list" aria-label="Stored memories"></ul>
+      <h3 class="studio-subheading">Suggested memories</h3>
+      <p class="studio-note">Jarvis only proposes these from your own sentences; nothing is saved until you accept.</p>
+      <ul id="memory-suggestions" class="studio-list" aria-label="Suggested memories"></ul>
+    </section>
+
+    <section id="studio-sessions" class="studio-view" role="tabpanel" data-studio-view="sessions" hidden>
+      <p class="studio-note">Durable chat turns indexed with FTS5. Search is local.</p>
+      <form id="session-search-form" class="studio-form">
+        <div class="studio-row"><label class="sr-only" for="session-query">Search conversations</label><input id="session-query" type="search" placeholder="Search past conversations…"><button class="studio-button" type="submit">Search</button></div>
+      </form>
+      <ul id="session-list" class="studio-list" aria-label="Session search results"></ul>
+    </section>
+
+    <section id="studio-skills" class="studio-view" role="tabpanel" data-studio-view="skills" hidden>
+      <p class="studio-note">Read-only SKILL.md procedures. Reading a skill never executes code.</p>
+      <form id="skill-search-form" class="studio-form"><div class="studio-row"><label class="sr-only" for="skill-query">Search skills</label><input id="skill-query" type="search" placeholder="Search skills…"><button class="studio-button" type="submit">Search</button></div></form>
+      <ul id="skill-list" class="studio-list" aria-label="Available skills"></ul>
+      <article id="skill-view" class="studio-detail" hidden>
+        <div class="studio-detail-head"><strong id="skill-view-name"></strong><button id="skill-view-close" class="text-button" type="button">Close ×</button></div>
+        <pre id="skill-view-content"></pre>
+      </article>
+    </section>
+
+    <section id="studio-research" class="studio-view" role="tabpanel" data-studio-view="research" hidden>
+      <p class="studio-note">Public web results with real URLs. General knowledge is not treated as a Sejf citation.</p>
+      <form id="research-form" class="studio-form"><div class="studio-row"><label class="sr-only" for="research-query">Web research query</label><input id="research-query" type="search" placeholder="Search the public web…" required><button class="studio-button primary" type="submit">Research</button></div></form>
+      <ol id="research-results" class="studio-list research-results" aria-label="Web research results"></ol>
+    </section>
+
+    <section id="studio-mcp" class="studio-view" role="tabpanel" data-studio-view="mcp" hidden>
+      <p class="studio-note">MCP servers from <code>~/.jarvis-tools/mcp.json</code> (stdio, Streamable HTTP or SSE). A call is an external action and needs explicit confirmation. For a remote server with OAuth, run <code>python3 mcp_client.py auth &lt;server&gt;</code>.</p>
+      <div class="studio-actions"><button id="mcp-refresh" class="studio-button" type="button">Refresh servers</button><button id="mcp-discover" class="studio-button" type="button">Discover tools</button></div>
+      <ul id="mcp-servers" class="studio-list" aria-label="MCP servers"></ul>
+      <pre id="mcp-tools-list" class="studio-detail" hidden></pre>
+      <form id="mcp-call-form" class="studio-form">
+        <div class="studio-row"><label class="sr-only" for="mcp-server">MCP server</label><input id="mcp-server" type="text" placeholder="server"><label class="sr-only" for="mcp-tool">MCP tool</label><input id="mcp-tool" type="text" placeholder="tool"></div>
+        <label class="sr-only" for="mcp-arguments">MCP arguments JSON</label>
+        <textarea id="mcp-arguments" placeholder='{"path":"/tmp"}'>{}</textarea>
+        <label class="studio-check"><input id="mcp-confirm" type="checkbox"> I understand this calls an external MCP tool.</label>
+        <div class="studio-actions"><button id="mcp-call" class="studio-button danger" type="submit" disabled>Call MCP tool</button></div>
+      </form>
+      <pre id="mcp-call-result" class="studio-detail" hidden></pre>
+    </section>
+
+    <section id="studio-schedules" class="studio-view" role="tabpanel" data-studio-view="schedules" hidden>
+      <p class="studio-note">Recurring Operator jobs. One job at a time; failures retry with bounded backoff.</p>
+      <form id="schedule-form" class="studio-form">
+        <label class="sr-only" for="schedule-task">Scheduled task</label>
+        <textarea id="schedule-task" maxlength="4000" placeholder="What should the Operator do?" required></textarea>
+        <div class="studio-row"><label class="sr-only" for="schedule-every">Interval in seconds</label><input id="schedule-every" type="number" min="60" max="2592000" value="3600" aria-label="Interval in seconds"><input id="schedule-name" type="text" maxlength="80" placeholder="name (optional)"><input id="schedule-retries" type="number" min="0" max="3" value="1" aria-label="Maximum retries"></div>
+        <div class="studio-actions"><button class="studio-button primary" type="submit">Add schedule</button><button id="schedule-refresh" class="studio-button" type="button">Refresh</button></div>
+      </form>
+      <ul id="schedule-list" class="studio-list" aria-label="Scheduled jobs"></ul>
+    </section>
+
+    <section id="studio-overview" class="studio-view" role="tabpanel" data-studio-view="overview" hidden>
+      <p class="studio-note">A deterministic local briefing. No paid weather or news service is contacted.</p>
+      <div class="studio-actions"><button id="briefing-refresh" class="studio-button primary" type="button">Build briefing</button><button id="services-refresh" class="studio-button" type="button">Refresh services</button><button id="services-install" class="studio-button" type="button">Install supervisor</button><button id="services-restart" class="studio-button" type="button">Restart service</button></div>
+      <div id="studio-services" class="studio-metrics"></div>
+      <pre id="briefing-text" class="studio-detail">Press Build briefing.</pre>
+      <h3 class="studio-subheading">Operator queue</h3>
+      <div class="studio-actions"><button id="agent-queue-resume" class="studio-button" type="button">Resume next</button></div>
+      <ul id="agent-queue-list" class="studio-list" aria-label="Operator queue"></ul>
+    </section>
+
+    <section id="studio-system" class="studio-view" role="tabpanel" data-studio-view="system" hidden>
+      <p class="studio-note">Live Linux metrics from /proc; read-only.</p>
+      <div class="studio-actions"><button id="system-refresh" class="studio-button primary" type="button">Refresh metrics</button></div>
+      <div id="system-metrics" class="studio-metrics"></div>
+      <ul id="system-processes" class="studio-list" aria-label="Top processes"></ul>
+    </section>
+
+    <section id="studio-apps" class="studio-view" role="tabpanel" data-studio-view="apps" hidden>
+      <p class="studio-note">Resolve a desktop app/window. Focus is graceful; Close needs a second click and confirmation.</p>
+      <form id="apps-form" class="studio-form"><div class="studio-row"><label class="sr-only" for="apps-query">App or window name</label><input id="apps-query" type="search" placeholder="App or window name…"><button class="studio-button primary" type="submit">Find</button></div></form>
+      <ul id="apps-list" class="studio-list" aria-label="Desktop apps and windows"></ul>
+    </section>
+
+    <section id="studio-docs" class="studio-view" role="tabpanel" data-studio-view="docs" hidden>
+      <p class="studio-note">Generate a local DOCX, XLSX, PPTX or PDF under ~/.jarvis-tools/documents.</p>
+      <form id="document-form" class="studio-form">
+        <div class="studio-row"><label class="sr-only" for="document-kind">Document kind</label><select id="document-kind"><option value="docx">DOCX</option><option value="xlsx">XLSX</option><option value="pptx">PPTX</option><option value="pdf">PDF</option></select><label class="sr-only" for="document-template">Template</label><select id="document-template"><option value="plain">Plain</option><option value="report">Report</option><option value="letter">Letter</option><option value="minutes">Minutes</option></select><label class="sr-only" for="document-title">Document title</label><input id="document-title" type="text" maxlength="160" placeholder="Title" required></div>
+        <label class="sr-only" for="document-body">Document body</label><textarea id="document-body" maxlength="20000" placeholder="Body / notes"></textarea>
+        <label class="sr-only" for="document-rows">Rows JSON</label><textarea id="document-rows" placeholder='Rows for XLSX: [["Name","Value"],["one",1]]'></textarea>
+        <div class="studio-actions"><button class="studio-button primary" type="submit">Generate document</button><button id="documents-refresh" class="studio-button" type="button">Refresh list</button></div>
+      </form>
+      <ul id="documents-list" class="studio-list" aria-label="Generated documents"></ul>
+    </section>
+
+    <section id="studio-files" class="studio-view" role="tabpanel" data-studio-view="files" hidden>
+      <p class="studio-note">Scan local duplicates, empty folders and old files. Quarantine moves files to a restoreable trash, never delete.</p>
+      <form id="files-form" class="studio-form"><div class="studio-row"><label class="sr-only" for="files-root">Scan root</label><input id="files-root" type="text" value="~/Desktop" aria-label="Scan root"><input id="files-older" type="number" min="1" max="3650" value="365" aria-label="Older than days"><button class="studio-button primary" type="submit">Scan</button></div></form>
+      <p id="files-summary" class="studio-status">No scan yet.</p>
+      <div class="studio-actions"><button id="files-quarantine" class="studio-button danger" type="button" disabled>Quarantine duplicate copies</button><button id="files-restore" class="studio-button" type="button" disabled>Restore last batch</button><button id="files-preview" class="studio-button" type="button">Preview archive</button><button id="files-archive" class="studio-button danger" type="button" disabled>Archive old files</button><button id="files-restore-archive" class="studio-button" type="button" disabled>Restore archived batch</button></div>
+      <ul id="files-duplicates" class="studio-list" aria-label="Duplicate files"></ul>
+      <ul id="files-empty" class="studio-list" aria-label="Empty directories"></ul>
+      <ul id="files-old" class="studio-list" aria-label="Old files"></ul>
+      <h3 class="studio-subheading">File checkpoints (shadow git)</h3>
+      <p class="studio-note">Jarvis snapshots a project before a file-changing Operator action. Safe restore keeps files you edited yourself; full restore returns the whole directory to the snapshot.</p>
+      <div class="studio-row"><label class="sr-only" for="checkpoints-path">Project path</label><input id="checkpoints-path" type="text" placeholder="Project path, e.g. ~/Jarvis" aria-label="Project path"><button id="checkpoints-refresh" class="studio-button primary" type="button">Show checkpoints</button><button id="checkpoints-all" class="studio-button" type="button">All projects</button></div>
+      <p id="checkpoints-status" class="studio-status">No checkpoint list loaded.</p>
+      <pre id="checkpoints-diff" class="studio-diff" aria-live="polite" hidden></pre>
+      <ul id="checkpoints-list" class="studio-list" aria-label="File checkpoints"></ul>
+    </section>
+
+    <section id="studio-selfmod" class="studio-view" role="tabpanel" data-studio-view="selfmod" hidden>
+      <p class="studio-note">Self-modification is proposal-first. Generate a preview, review it, then apply with the one-time token. Generated code runs in a disposable worker, never inside server.py.</p>
+      <div class="studio-actions"><button id="selfmod-refresh" class="studio-button primary" type="button">Refresh selfmod</button></div>
+      <div id="selfmod-metrics" class="studio-metrics"></div>
+      <div id="selfmod-evolution" class="studio-block">
+        <h3 class="studio-subheading">Improvement state</h3>
+        <p id="selfmod-drift" class="studio-status">Benchmark integrity unknown.</p>
+        <ul id="selfmod-curriculum" class="studio-list" aria-label="Curriculum gaps"></ul>
+        <ul id="selfmod-lessons" class="studio-list" aria-label="Failure lessons"></ul>
+        <div class="studio-actions"><button id="selfmod-suggest" class="studio-button primary" type="button">Suggest next changes</button><button id="selfmod-seal" class="studio-button" type="button">Re-seal benchmark</button><button id="selfmod-draft" class="studio-button" type="button">Draft bench cases</button><button id="selfmod-watch" class="studio-button" type="button">Runtime watch: off</button></div>
+        <ul id="selfmod-watch-log" class="studio-list" aria-label="Runtime tracebacks"></ul>
+        <ul id="selfmod-suggestions" class="studio-list" aria-label="Suggestions"></ul>
+      </div>
+      <h3 class="studio-subheading">Pending proposals</h3>
+      <ul id="selfmod-proposals" class="studio-list" aria-label="Self-modification proposals"></ul>
+      <div class="studio-row"><label class="sr-only" for="selfmod-token">One-time proposal token</label><input id="selfmod-token" type="text" autocomplete="off" placeholder="one-time token"><button id="selfmod-apply" class="studio-button primary" type="button" disabled>Apply selected</button></div>
+      <p id="selfmod-selected" class="studio-status">No proposal selected.</p>
+      <h3 class="studio-subheading">Propose a skill</h3>
+      <textarea id="selfmod-goal" maxlength="8000" placeholder="What should the skill do?"></textarea>
+      <div class="studio-actions"><button id="selfmod-forge" class="studio-button primary" type="button">Propose skill</button></div>
+      <h3 class="studio-subheading">Change a source file from an instruction</h3>
+      <div class="studio-row"><label class="sr-only" for="selfmod-file">Target file</label><input id="selfmod-file" type="text" placeholder="e.g. router.py"><span class="studio-hint">file name in the project root</span></div>
+      <textarea id="selfmod-instruction" maxlength="8000" placeholder="What should change? e.g. Add a helper that returns the file extension in lower case."></textarea>
+      <div class="studio-actions"><button id="selfmod-change" class="studio-button primary" type="button">Propose change</button></div>
+      <h3 class="studio-subheading">Propose a source patch</h3>
+      <textarea id="selfmod-traceback" placeholder="Paste a real traceback; nothing is written until you apply the proposal."></textarea>
+      <div class="studio-actions"><button id="selfmod-heal" class="studio-button" type="button">Propose patch</button></div>
+      <h3 class="studio-subheading">Learned style rules</h3>
+      <form id="selfmod-rule-form" class="studio-form">
+        <div class="studio-row"><label class="sr-only" for="selfmod-rule-text">Rule text</label><input id="selfmod-rule-text" type="text" maxlength="2000" placeholder="e.g. Prefer short answers"><button class="studio-button" type="submit">Add rule</button></div>
+      </form>
+      <ul id="selfmod-rules" class="studio-list" aria-label="Learned rules"></ul>
+      <h3 class="studio-subheading">Patch history</h3>
+      <ul id="selfmod-patches" class="studio-list" aria-label="Patch history"></ul>
+    </section>
+
+    <section id="studio-clipboard" class="studio-view" role="tabpanel" data-studio-view="clipboard" hidden>
+      <p class="studio-note">Read the local X11 clipboard. The text is not written to disk or logs; Copy uses the browser clipboard.</p>
+      <div class="studio-actions"><button id="clipboard-read" class="studio-button primary" type="button">Read clipboard</button><button id="clipboard-copy" class="studio-button" type="button">Copy text</button></div>
+      <textarea id="clipboard-text" maxlength="20000" placeholder="Clipboard text…"></textarea>
+    </section>
+
+    <section id="studio-reminders" class="studio-view" role="tabpanel" data-studio-view="reminders" hidden>
+      <p class="studio-note">Durable local reminders stored in SQLite. Quiet hours and snooze supported.</p>
+      <form id="reminder-create-form" class="studio-form">
+        <div class="studio-row">
+          <input id="reminder-text" type="text" placeholder="Reminder text…" required>
+          <input id="reminder-due" type="datetime-local" required>
+          <button class="studio-button primary" type="submit">Add</button>
+        </div>
+      </form>
+      <h3 class="studio-subheading">Active reminders</h3>
+      <ul id="reminders-list" class="studio-list" aria-label="Reminders list"></ul>
+    </section>
+
+    <section id="studio-watch" class="studio-view" role="tabpanel" data-studio-view="watch" hidden>
+      <p class="studio-note">Watch pages and prices. Automatic checks with notifications for detected changes.</p>
+      <form id="watch-create-form" class="studio-form">
+        <div class="studio-row">
+          <input id="watch-url" type="url" placeholder="https://example.com/product" required>
+          <button class="studio-button primary" type="submit">Watch page</button>
+        </div>
+      </form>
+      <h3 class="studio-subheading">Watched pages &amp; prices</h3>
+      <ul id="watch-list" class="studio-list" aria-label="Watched pages list"></ul>
+    </section>
+
+    <section id="studio-mission" class="studio-view" role="tabpanel" data-studio-view="mission" hidden>
+      <p class="studio-note">Kokpit Mission Control: zespoły agentów, budżet chmurowy, pytania właściciela, Nocna Zmiana, makra, Time-Travel i zaszyfrowane kopie.</p>
+      <div class="studio-actions">
+        <button id="mission-refresh" class="studio-button primary" type="button">Odśwież</button>
+        <button id="mission-run-nightshift" class="studio-button" type="button">Uruchom Night Shift</button>
+        <button id="mission-rollback" class="studio-button danger" type="button">Cofnij Checkpoint</button>
+      </div>
+      <p id="mission-status-line" class="studio-status" role="status" aria-live="polite">Gotowe.</p>
+      <div id="mission-metrics" class="studio-metrics"></div>
+
+      <h3 class="studio-subheading">Pytania od agentów (Hands-Free / Ask Owner)</h3>
+      <ul id="mission-questions" class="studio-list" aria-label="Pytania od agentów"></ul>
+
+      <h3 class="studio-subheading">Zespoły agentów kodujących</h3>
+      <form id="mission-team-form" class="studio-form">
+        <div class="studio-row">
+          <input id="mission-team-goal" type="text" maxlength="2000" placeholder="Cel nowego zespołu agentów…" required>
+          <button class="studio-button primary" type="submit">Start zespołu</button>
+        </div>
+      </form>
+      <ul id="mission-projects" class="studio-list" aria-label="Projekty zespołowe"></ul>
+
+      <h3 class="studio-subheading">Limit budżetu chmurowego (USD / dzień)</h3>
+      <form id="mission-budget-form" class="studio-form">
+        <div class="studio-row">
+          <input id="mission-budget-daily" type="number" step="0.5" min="0.5" max="500" value="5.0" aria-label="Limit dzienny USD">
+          <button class="studio-button" type="submit">Zapisz limit</button>
+        </div>
+      </form>
+
+      <h3 class="studio-subheading">Ostatni raport Nocnej Zmiany</h3>
+      <pre id="mission-nightshift-summary" class="studio-detail">Brak raportu.</pre>
+
+      <h3 class="studio-subheading">Wykryte makra z pulpitu</h3>
+      <ul id="mission-macros" class="studio-list" aria-label="Wykryte makra"></ul>
+
+      <h3 class="studio-subheading">Time-Travel (Sesja + Pliki)</h3>
+      <ul id="mission-timepoints" class="studio-list" aria-label="Punkty Time-Travel"></ul>
+
+      <h3 class="studio-subheading">Szyfrowany backup stanu</h3>
+      <form id="mission-backup-form" class="studio-form">
+        <div class="studio-row">
+          <input id="mission-backup-pass" type="password" minlength="6" placeholder="Hasło szyfrowania kopii (min. 6 znaków)" required>
+          <button class="studio-button primary" type="submit">Utwórz backup</button>
+        </div>
+      </form>
+      <ul id="mission-backups" class="studio-list" aria-label="Zaszyfrowane kopie"></ul>
+    </section>
+  </aside>
+
+  <div id="command-overlay" class="command-overlay" hidden>
+    <div id="command-backdrop" class="command-backdrop"></div>
+    <section class="command-card" role="dialog" aria-modal="true" aria-labelledby="command-title">
+      <header class="command-head"><div><span class="studio-eyebrow">CTRL + K</span><h2 id="command-title">Jarvis commands</h2></div><button id="command-close" class="icon-button" type="button" aria-label="Close commands">×</button></header>
+      <label class="sr-only" for="command-input">Command</label>
+      <input id="command-input" type="search" autocomplete="off" placeholder="Ask, remember, open Studio, run the Operator…">
+      <div id="command-results" class="command-results" role="listbox" aria-label="Command results"></div>
+    </section>
+  </div>
+
+  <div id="capability-overlay" class="capability-overlay" hidden>
+    <div id="capability-backdrop" class="capability-backdrop"></div>
+    <section class="capability-card" role="dialog" aria-modal="true" aria-labelledby="capability-title">
+      <header class="capability-head">
+        <div><span class="capability-eyebrow">LOCAL CAPABILITY MAP</span><h2 id="capability-title">What Jarvis can do</h2></div>
+        <button id="capability-close" class="icon-button" type="button" aria-label="Close capabilities">×</button>
+      </header>
+      <p id="capability-status" class="capability-status" role="status" aria-live="polite">Reading the live manifest…</p>
+      <div class="capability-quick" aria-label="Quick actions">
+        <button class="capability-button primary" type="button" data-cap-action="ask">Ask a question</button>
+        <button class="capability-button" type="button" data-cap-action="remember">Remember a fact</button>
+        <button class="capability-button" type="button" data-cap-action="operator">Open Operator</button>
+        <button class="capability-button" type="button" data-cap-action="studio">Open Studio</button>
+      </div>
+      <div id="capability-grid" class="capability-grid"></div>
+      <details class="capability-limits"><summary>Limits and safety</summary><ul id="capability-limits"></ul></details>
+    </section>
+  </div>
+
+  <div id="td-reader" class="td-reader" hidden>
+    <div id="td-reader-backdrop" class="td-reader-backdrop"></div>
+    <section class="td-reader-card" role="dialog" aria-modal="true" aria-labelledby="td-reader-title">
+      <header class="td-reader-head">
+        <div><span class="td-eyebrow">TEARDOWN NOTE</span><h2 id="td-reader-title">Teardown</h2></div>
+        <div class="td-reader-actions">
+          <a id="td-obsidian" class="td-obsidian" href="#" role="button">Open in Obsidian</a>
+          <button id="td-reader-close" class="td-reader-close" type="button">Close</button>
+        </div>
+      </header>
+      <div id="td-reader-body" class="td-reader-body"></div>
+    </section>
+  </div>
+  <noscript><div class="noscript-message">Jarvis needs JavaScript to display your notes. Please enable it and reload this page.</div></noscript>
+</body>
+</html>

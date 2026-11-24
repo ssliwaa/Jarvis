@@ -1,0 +1,20 @@
+/* Voice chrome: everything sits inside the composer, so this file only adds
+   states and the level meter. Sizing lives in style.css. */
+#voice-status { font-family: var(--mono); font-size: 8.5px; letter-spacing: .08em; color: var(--dim); }
+#voice-status[data-state="listening"] { color: var(--accent); }
+#voice-status[data-state="thinking"] { color: var(--amber); }
+#voice-status[data-state="speaking"] { color: var(--sky); }
+.voice-toolbar #voice-output { max-width: 190px; }
+.mic-level { transition: opacity .2s ease; }
+.mic-level[hidden] { display: none; }
+.mic-level span:first-child {
+  transition: transform .08s linear;
+  box-shadow: 0 0 8px rgba(61, 220, 151, .5);
+}
+.action-receipt { margin-top: 2px; }
+.chat-form .mic-button[aria-pressed="true"] svg { stroke: #04120b; }
+@media (max-width: 760px) {
+  .voice-toolbar { flex-wrap: wrap; }
+  .voice-toolbar select { max-width: 132px; }
+  .ptt-hint { display: none; }
+}

@@ -1,0 +1,13 @@
+{
+  "name": "jarvis-desktop",
+  "version": "1.0.0",
+  "description": "Jarvis local knowledge galaxy desktop shell",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "type": "commonjs",
+  "dependencies": {
+    "electron": "45.0.0"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "module": "documents",
+  "cases": [
+    {
+      "call": "_slug",
+      "kwargs": {
+        "value": "Raport Miesięczny 2026!"
+      },
+      "expect": "raport-miesięczny-2026",
+      "level": 1
+    },
+    {
+      "call": "_slug",
+      "kwargs": {
+        "value": "  --A  B--  "
+      },
+      "expect": "a-b",
+      "level": 2
+    },
+    {
+      "call": "list_templates",
+      "kwargs": {},
+      "expect_contains": "report",
+      "level": 1
+    },
+    {
+      "call": "_rows",
+      "kwargs": {
+        "value": [
+          [
+            "a",
+            "b"
+          ],
+          [
+            "c",
+            "d"
+          ]
+        ]
+      },
+      "expect": [
+        [
+          "a",
+          "b"
+        ],
+        [
+          "c",
+          "d"
+        ]
+      ],
+      "level": 2
+    }
+  ]
+}

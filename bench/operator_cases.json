@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "note": "Deterministic Operator acceptance cases. Each run spends real model tokens and opens a real browser.",
+  "cases": [
+    {
+      "name": "read_title",
+      "task": "Open https://example.com, read the page, and finish with the page title in your summary.",
+      "expect_status": "done",
+      "expect_summary_contains": ["example domain"]
+    },
+    {
+      "name": "write_file",
+      "task": "Write the exact text 'bench ok' to ~/.jarvis-tools/bench-probe.txt and finish.",
+      "expect_status": "done",
+      "expect_file": {"~/.jarvis-tools/bench-probe.txt": "bench ok"}
+    },
+    {
+      "name": "screenshot",
+      "task": "Open https://example.com, take a screenshot, and finish.",
+      "expect_status": "done"
+    }
+  ]
+}
